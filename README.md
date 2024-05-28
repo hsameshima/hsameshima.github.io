@@ -9,9 +9,10 @@
 
 ## 研究業績
 - [ORCID](https://orcid.org/0000-0001-6401-723X)
+- [researchmap](https://researchmap.jp/hiroaki.sameshima/?lang=japanese)
 - [Google scholar](https://scholar.google.co.jp/citations?user=YNROWegAAAAJ&hl=ja&oi=ao)
 
-## 職歴
+## 経歴
 
 |西暦|所属|職位|
 |---|---|---|
