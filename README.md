@@ -22,6 +22,6 @@
 |2012–2015|JAXA 宇宙科学研究所|日本学術振興会特別研究員(PD)|
 
 
-## Access
+## アクセス
 - 東京大学大学院理学系研究科附属天文学教育研究センター 20XX号室
 - E-mail: hsameshima@ioa.s.u-tokyo.ac.jp
