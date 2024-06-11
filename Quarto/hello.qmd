@@ -1,0 +1,90 @@
+---
+title: "Quarto Basics"
+format:
+  html:
+    code-fold: true
+jupyter: python3
+---
+
+For a demonstration of a line plot on a polar axis, see @fig-polar.
+
+```{python}
+#| label: fig-polar
+#| fig-cap: "A line plot on a polar axis"
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+r = np.arange(0, 2, 0.01)
+theta = 2 * np.pi * r
+fig, ax = plt.subplots(
+  subplot_kw = {'projection': 'polar'} 
+)
+ax.plot(theta, r)
+ax.set_rticks([0.5, 1, 1.5, 2])
+ax.grid(True)
+plt.show()
+```
+
+# 日本語テスト
+- 箇条書き
+- $\displaystyle \int_{\nu_0}^\infty 4\pi J_\nu$
+
+
+```{python}
+
+import seaborn as sns
+from astropy import constants as const
+from astropy import units as u
+from astropy.visualization import quantity_support
+from astropy.modeling.models import BlackBody
+
+#fig = plt.figure(figsize=(18,6))
+#fig.subplots_adjust(wspace=0.3, hspace=0.2)
+fig = plt.figure()
+sns.set('talk', 'ticks', 'colorblind', font_scale=1.0, rc={"lines.linewidth": 1.5, 'grid.linestyle': '--'})
+cmap = plt.get_cmap("tab10")
+
+
+bb = BlackBody(temperature=39700*u.K)
+wave = np.arange(100, 10000) * u.AA
+flux = bb(wave)
+
+nu = wave.to(u.Hz, equivalencies=u.spectral())
+energy = (const.h * nu).to(u.erg)
+
+ax = fig.add_subplot(311)
+with quantity_support():
+    ax.semilogx(wave, flux)
+    ax.set_title(r'$B_\nu$')
+
+    ax.axvline(912, ls='--')
+
+ax = fig.add_subplot(312)
+with quantity_support():
+    ax.semilogx(wave, np.pi*u.sr * flux / energy)
+    ax.set_title(r'$\pi B_\nu/h\nu$')
+
+    ax.axvline(912, ls='--')
+
+## nu
+nu_step = np.linspace(3.287e15, 3.287e16, 1000) * u.Hz
+flux_step = bb(nu_step)
+
+ax = fig.add_subplot(313)
+with quantity_support():
+    ax.set_xscale('log')
+    ax.set_title(r'$\pi B_\nu/h\nu$ vs. $\nu$')
+    ax.fill_between(nu_step, flux_step, color='grey', alpha=0.5)
+    ax.plot(nu_step, flux_step)
+
+## 912 AA <--> 3.287e15 Hz
+nu_step = np.linspace(3.287e15, 3.287e16, 1000) * u.Hz
+flux_step = bb(nu_step)
+
+Q = sum(np.pi*u.sr * flux_step / (const.h * nu_step).to(u.erg)) * (nu_step[1] - nu_step[0]) * (10. * (696340*u.km).to(u.cm))**2 * 4*np.pi # 10太陽半径を仮定
+Gamma = Q / (4*np.pi * (5*u.pc).to(u.cm)**2) * (6e-18*u.cm**2)
+
+#print('Q_H0: {}'.format(Q))
+#print('Gamma_H0: {}'.format(Gamma))
+```
