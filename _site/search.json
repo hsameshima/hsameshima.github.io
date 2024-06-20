@@ -1,0 +1,72 @@
+[
+  {
+    "objectID": "index.html#研究テーマ",
+    "href": "index.html#研究テーマ",
+    "title": "鮫島 寛明 (Hiroaki Sameshima)",
+    "section": "研究テーマ",
+    "text": "研究テーマ\n\n活動銀河核の観測的研究\n\n遠方活動銀河核のプラズマ診断に基づく宇宙化学進化の研究\n反響マッピング観測\n\n近赤外線高分散分光器を用いた観測的研究\n\n褐色矮星"
+  },
+  {
+    "objectID": "index.html#研究業績",
+    "href": "index.html#研究業績",
+    "title": "鮫島 寛明 (Hiroaki Sameshima)",
+    "section": "研究業績",
+    "text": "研究業績\n\nORCID\nresearchmap\nGoogle scholar"
+  },
+  {
+    "objectID": "index.html#経歴",
+    "href": "index.html#経歴",
+    "title": "鮫島 寛明 (Hiroaki Sameshima)",
+    "section": "経歴",
+    "text": "経歴\n\n\n\n\n\n\n\n\n西暦\n所属\n職位\n\n\n\n\n2022–現在\n東京大学大学院理学系研究科附属天文学教育研究センター\n助教\n\n\n2019–2022\n東京大学大学院理学系研究科附属天文学教育研究センター\n特任助教\n\n\n2015–2019\n京都産業大学神山天文台\n研究員\n\n\n2012–2015\nJAXA 宇宙科学研究所\n日本学術振興会特別研究員(PD)"
+  },
+  {
+    "objectID": "index.html#アクセス",
+    "href": "index.html#アクセス",
+    "title": "鮫島 寛明 (Hiroaki Sameshima)",
+    "section": "アクセス",
+    "text": "アクセス\n\n東京大学大学院理学系研究科附属天文学教育研究センター 2019号室\nE-mail: hsameshima@ioa.s.u-tokyo.ac.jp"
+  },
+  {
+    "objectID": "Quarto/test_note/hello.html",
+    "href": "Quarto/test_note/hello.html",
+    "title": "Quarto Basics",
+    "section": "",
+    "text": "For a demonstration of a line plot on a polar axis, see Figure 1.\n\n\nCode\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nr = np.arange(0, 2, 0.01)\ntheta = 2 * np.pi * r\nfig, ax = plt.subplots(\n  subplot_kw = {'projection': 'polar'} \n)\nax.plot(theta, r)\nax.set_rticks([0.5, 1, 1.5, 2])\nax.grid(True)\nplt.show()\n\n\n\n\n\n\n\n\nFigure 1: A line plot on a polar axis\n\n\n\n\n\n\n日本語テスト\n\n箇条書き\n\\(\\displaystyle \\int_{\\nu_0}^\\infty 4\\pi J_\\nu\\)\n\n\n\nCode\nimport seaborn as sns\nfrom astropy import constants as const\nfrom astropy import units as u\nfrom astropy.visualization import quantity_support\nfrom astropy.modeling.models import BlackBody\n\n#fig = plt.figure(figsize=(18,6))\n#fig.subplots_adjust(wspace=0.3, hspace=0.2)\nfig = plt.figure()\nsns.set('talk', 'ticks', 'colorblind', font_scale=1.0, rc={\"lines.linewidth\": 1.5, 'grid.linestyle': '--'})\ncmap = plt.get_cmap(\"tab10\")\n\n\nbb = BlackBody(temperature=39700*u.K)\nwave = np.arange(100, 10000) * u.AA\nflux = bb(wave)\n\nnu = wave.to(u.Hz, equivalencies=u.spectral())\nenergy = (const.h * nu).to(u.erg)\n\nax = fig.add_subplot(311)\nwith quantity_support():\n    ax.semilogx(wave, flux)\n    ax.set_title(r'$B_\\nu$')\n\n    ax.axvline(912, ls='--')\n\nax = fig.add_subplot(312)\nwith quantity_support():\n    ax.semilogx(wave, np.pi*u.sr * flux / energy)\n    ax.set_title(r'$\\pi B_\\nu/h\\nu$')\n\n    ax.axvline(912, ls='--')\n\n## nu\nnu_step = np.linspace(3.287e15, 3.287e16, 1000) * u.Hz\nflux_step = bb(nu_step)\n\nax = fig.add_subplot(313)\nwith quantity_support():\n    ax.set_xscale('log')\n    ax.set_title(r'$\\pi B_\\nu/h\\nu$ vs. $\\nu$')\n    ax.fill_between(nu_step, flux_step, color='grey', alpha=0.5)\n    ax.plot(nu_step, flux_step)\n\n## 912 AA &lt;--&gt; 3.287e15 Hz\nnu_step = np.linspace(3.287e15, 3.287e16, 1000) * u.Hz\nflux_step = bb(nu_step)\n\nQ = sum(np.pi*u.sr * flux_step / (const.h * nu_step).to(u.erg)) * (nu_step[1] - nu_step[0]) * (10. * (696340*u.km).to(u.cm))**2 * 4*np.pi # 10太陽半径を仮定\nGamma = Q / (4*np.pi * (5*u.pc).to(u.cm)**2) * (6e-18*u.cm**2)\n\n#print('Q_H0: {}'.format(Q))\n#print('Gamma_H0: {}'.format(Gamma))\n\n\n\n\n\n\n\n\n\n\n\nCode\nimport plotly.graph_objects as go\nimport numpy as np\n\nfrom astropy.modeling.models import BlackBody\nimport astropy.units as u\n\nimport warnings\nwarnings.simplefilter('ignore')\n\n# Read solar spectrum\nf = open('astmg173.csv', 'r')\nlines = f.readlines()\nwave_sun = np.zeros(0)\nflux_sun = np.zeros(0)\nfor line in lines[2:]:\n  wave_sun = np.append(wave_sun, float(line.strip().split(',')[0])) # nm\n  flux_sun = np.append(flux_sun, float(line.strip().split(',')[1]))\nf.close()\n\n\n# Create figure\nfig = go.Figure()\n\nfig.add_trace(\n  go.Scatter(\n      visible=True,\n      line=dict(color=\"red\", width=1),\n      name=\"Sun\",\n      x = wave_sun,\n      y = flux_sun / max(flux_sun),\n      )\n  )\n\n# Add traces, one for each slider step\nfor step in np.arange(100, 8100, 100):\n    bb_lam = BlackBody(step * u.K, scale=1.0 * u.erg / (u.cm ** 2 * u.AA * u.s * u.sr))\n    fig.add_trace(\n        go.Scatter(\n            visible=False,\n            line=dict(color=\"#00CED1\", width=6),\n            name=\"T = \" + str(step) + \"K\",\n            x = np.arange(100, 2500, 1),\n            y = bb_lam(np.arange(100, 2500, 1) * u.nm) / max(bb_lam(np.arange(100, 2500, 1) * u.nm))\n            )\n        )\n\n# Make 10th trace visible\nfig.data[10].visible = True\n\n# Create and add slider\nsteps = []\nfor i in range(len(fig.data)):\n    step = dict(\n        method=\"update\",\n        args=[{\"visible\": [False] * len(fig.data)},\n              {\"title\": \"Slider switched to T = \" + str(100 * i) + \"K\"}],  # layout attribute\n              #{\"title\": \"Slider switched to step: \" + str(i)}],  # layout attribute\n    )\n    step[\"args\"][0][\"visible\"][i] = True  # Toggle i'th trace to \"visible\"\n    step[\"args\"][0][\"visible\"][0] = True  # Toggle i'th trace to \"visible\"\n    steps.append(step)\n\nsliders = [dict(\n    active=10, # default value of the step. should be set to the same value with the above \"fig.data[X].visible = True\"\n    currentvalue={\"prefix\": \"Temperature: \"},\n    pad={\"t\": 50}, # padding of the slider\n    steps=steps\n)]\n\nfig.update_layout(\n    sliders=sliders,\n    width=800,\n    height=600,\n    margin=dict(l=50,r=50,t=50,b=50),\n    xaxis=dict(\n        title_text=\"Wavelength (nm)\",\n        range=[0, 2500]\n    ),\n    yaxis=dict(\n        title_text=\"Normalized F_λ\",\n        #range=[0, 1e7]\n    )\n)\n\nfig.show()"
+  },
+  {
+    "objectID": "Quarto/test_slide/slide.html",
+    "href": "Quarto/test_slide/slide.html",
+    "title": "Habits",
+    "section": "",
+    "text": "Turn off alarm\nGet out of bed"
+  },
+  {
+    "objectID": "Quarto/test_slide/slide.html#getting-up",
+    "href": "Quarto/test_slide/slide.html#getting-up",
+    "title": "Habits",
+    "section": "",
+    "text": "Turn off alarm\nGet out of bed"
+  },
+  {
+    "objectID": "Quarto/test_slide/slide.html#going-to-sleep",
+    "href": "Quarto/test_slide/slide.html#going-to-sleep",
+    "title": "Habits",
+    "section": "Going to sleep",
+    "text": "Going to sleep\n\nGet in bed\nCount sheep"
+  },
+  {
+    "objectID": "Quarto/test_slide/slide.html#matplotlib-sample",
+    "href": "Quarto/test_slide/slide.html#matplotlib-sample",
+    "title": "Habits",
+    "section": "Matplotlib sample",
+    "text": "Matplotlib sample\n\n\nCode\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nr = np.arange(0, 2, 0.01)\ntheta = 2 * np.pi * r\nfig, ax = plt.subplots(\n  subplot_kw = {'projection': 'polar'} \n)\nax.plot(theta, r)\nax.set_rticks([0.5, 1, 1.5, 2])\nax.grid(True)\nplt.show()\n\n\n\n\n\n\n\n\nFigure 1: A line plot on a polar axis"
+  },
+  {
+    "objectID": "Quarto/test_slide/slide.html#plotly-sample",
+    "href": "Quarto/test_slide/slide.html#plotly-sample",
+    "title": "Habits",
+    "section": "Plotly sample",
+    "text": "Plotly sample\n\n\nCode\nimport plotly.graph_objects as go\nimport numpy as np\n\nfrom astropy.modeling.models import BlackBody\nimport astropy.units as u\n\nimport warnings\nwarnings.simplefilter('ignore')\n\n# Read solar spectrum\nf = open('astmg173.csv', 'r')\nlines = f.readlines()\nwave_sun = np.zeros(0)\nflux_sun = np.zeros(0)\nfor line in lines[2:]:\n  wave_sun = np.append(wave_sun, float(line.strip().split(',')[0])) # nm\n  flux_sun = np.append(flux_sun, float(line.strip().split(',')[1]))\nf.close()\n\n\n# Create figure\nfig = go.Figure()\n\nfig.add_trace(\n  go.Scatter(\n      visible=True,\n      line=dict(color=\"red\", width=1),\n      name=\"Sun\",\n      x = wave_sun,\n      y = flux_sun / max(flux_sun),\n      )\n  )\n\n# Add traces, one for each slider step\nfor step in np.arange(100, 8100, 100):\n    bb_lam = BlackBody(step * u.K, scale=1.0 * u.erg / (u.cm ** 2 * u.AA * u.s * u.sr))\n    fig.add_trace(\n        go.Scatter(\n            visible=False,\n            line=dict(color=\"#00CED1\", width=6),\n            name=\"T = \" + str(step) + \"K\",\n            x = np.arange(100, 4000, 1),\n            y = bb_lam(np.arange(100, 4000, 1) * u.nm) / max(bb_lam(np.arange(100, 4000, 1) * u.nm))\n            )\n        )\n\n# Make 10th trace visible\nfig.data[10].visible = True\n\n# Create and add slider\nsteps = []\nfor i in range(len(fig.data)):\n    step = dict(\n        method=\"update\",\n        args=[{\"visible\": [False] * len(fig.data)},\n              {\"title\": \"Slider switched to T = \" + str(100 * i) + \"K\"}],  # layout attribute\n              #{\"title\": \"Slider switched to step: \" + str(i)}],  # layout attribute\n    )\n    step[\"args\"][0][\"visible\"][i] = True  # Toggle i'th trace to \"visible\"\n    step[\"args\"][0][\"visible\"][0] = True  # Toggle i'th trace to \"visible\"\n    steps.append(step)\n\nsliders = [dict(\n    active=10, # default value of the step. should be set to the same value with the above \"fig.data[X].visible = True\"\n    currentvalue={\"prefix\": \"Temperature: \"},\n    pad={\"t\": 50}, # padding of the slider\n    steps=steps\n)]\n\nfig.update_layout(\n    sliders=sliders,\n    width=800,\n    height=600,\n    margin=dict(l=50,r=50,t=50,b=50),\n    xaxis=dict(\n        title_text=\"Wavelength (nm)\",\n        range=[0, 2500]\n    ),\n    yaxis=dict(\n        title_text=\"Normalized F_λ\",\n        #range=[0, 1e7]\n    )\n)\n\nfig.show()"
+  }
+]
